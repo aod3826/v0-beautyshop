@@ -9,6 +9,7 @@ export async function POST(request: Request) {
       items,
       total_price,
       order_type,
+      address,
       delivery_address,
       latitude,
       longitude,
@@ -31,7 +32,16 @@ export async function POST(request: Request) {
           ? scheduled_time
           : null
 
-    if (!table_number || !items || !Array.isArray(items) || items.length === 0) {
+    const resolvedAddress = delivery_address ?? address ?? null
+
+
+    if (
+      table_number === undefined ||
+      table_number === null ||
+      !items ||
+      !Array.isArray(items) ||
+      items.length === 0
+    ) {
       return NextResponse.json(
         { error: "Invalid order data" },
         { status: 400 }
@@ -45,7 +55,7 @@ export async function POST(request: Request) {
       )
     }
 
-    if (normalizedOrderType === "delivery" && !delivery_address) {
+    if (normalizedOrderType === "delivery" && !resolvedAddress) {
       return NextResponse.json(
         { error: "delivery_address is required for delivery orders" },
         { status: 400 }
@@ -93,7 +103,7 @@ export async function POST(request: Request) {
         items,
         total_price,
         order_type: normalizedOrderType,
-        delivery_address: delivery_address ?? null,
+        delivery_address: resolvedAddress,
         latitude: parsedLatitude,
         longitude: parsedLongitude,
         scheduled_time: parsedScheduledTime
