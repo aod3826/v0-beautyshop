@@ -2,7 +2,15 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { Flame, Clock, CheckCircle2, History, ChefHat } from "lucide-react"
+import {
+  Flame,
+  Clock,
+  CheckCircle2,
+  History,
+  ChefHat,
+  Bike,
+  ShoppingBag,
+} from "lucide-react"
 
 interface OrderItem {
   name: string
@@ -15,11 +23,13 @@ interface OrderItem {
 interface Order {
   id: string
   table_number: number
-  status: "pending" | "cooking" | "done"
+  status: "pending" | "cooking" | "delivering" | "done"
   items: OrderItem[]
   total_price: number
   created_at: string
   updated_at: string
+  order_type?: "pickup" | "delivery" | string | null
+  scheduled_time?: string | null
 }
 
 function getElapsedTime(createdAt: string): string {
@@ -43,16 +53,70 @@ function getTimerColor(createdAt: string, status: string): string {
   return "text-zinc-400"
 }
 
+function getRemainingTime(targetTime: string): string {
+  const diff = new Date(targetTime).getTime() - Date.now()
+
+  if (diff <= 0) {
+    return "เลยเวลานัดแล้ว"
+  }
+
+  const totalSeconds = Math.floor(diff / 1000)
+  const hours = Math.floor(totalSeconds / 3600)
+  const mins = Math.floor((totalSeconds % 3600) / 60)
+  const secs = totalSeconds % 60
+
+  if (hours > 0) {
+    return `${hours}h ${String(mins).padStart(2, "0")}m ${String(secs).padStart(2, "0")}s`
+  }
+
+  return `${String(mins).padStart(2, "0")}m ${String(secs).padStart(2, "0")}s`
+}
+
+function playNewOrderBeep() {
+  if (typeof window === "undefined") return
+
+  const AudioContextClass =
+    window.AudioContext ||
+    (window as typeof window & { webkitAudioContext?: typeof AudioContext })
+      .webkitAudioContext
+
+  if (!AudioContextClass) return
+
+  const audioContext = new AudioContextClass()
+  const oscillator = audioContext.createOscillator()
+  const gainNode = audioContext.createGain()
+
+  oscillator.type = "square"
+  oscillator.frequency.value = 880
+
+  gainNode.gain.setValueAtTime(0.0001, audioContext.currentTime)
+  gainNode.gain.exponentialRampToValueAtTime(0.25, audioContext.currentTime + 0.02)
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.25)
+
+  oscillator.connect(gainNode)
+  gainNode.connect(audioContext.destination)
+
+  oscillator.start(audioContext.currentTime)
+  oscillator.stop(audioContext.currentTime + 0.25)
+
+  oscillator.onended = () => {
+    void audioContext.close()
+  }
+}
+
 function OrderTicket({
   order,
   onStatusChange,
 }: {
   order: Order
-  onStatusChange: (id: string, status: "cooking" | "done") => void
+  onStatusChange: (id: string, status: "cooking" | "delivering" | "done") => void
 }) {
   const [elapsed, setElapsed] = useState(getElapsedTime(order.created_at))
   const [timerColor, setTimerColor] = useState(
     getTimerColor(order.created_at, order.status)
+  )
+  const [scheduledCountdown, setScheduledCountdown] = useState(
+    order.scheduled_time ? getRemainingTime(order.scheduled_time) : null
   )
 
   useEffect(() => {
@@ -64,9 +128,24 @@ function OrderTicket({
     return () => clearInterval(interval)
   }, [order.created_at, order.status])
 
+  useEffect(() => {
+    if (!order.scheduled_time) {
+      setScheduledCountdown(null)
+      return
+    }
+
+    const interval = setInterval(() => {
+      setScheduledCountdown(getRemainingTime(order.scheduled_time as string))
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [order.scheduled_time])
+
   const statusBorder =
     order.status === "cooking"
       ? "border-amber-500"
+      : order.status === "delivering"
+        ? "border-sky-500"
       : order.status === "done"
         ? "border-green-500"
         : "border-zinc-600"
@@ -74,6 +153,8 @@ function OrderTicket({
   const statusBg =
     order.status === "cooking"
       ? "bg-amber-500/10"
+      : order.status === "delivering"
+        ? "bg-sky-500/10"
       : order.status === "done"
         ? "bg-green-500/10"
         : "bg-zinc-900"
@@ -87,6 +168,8 @@ function OrderTicket({
         className={`flex items-center justify-between rounded-t-md px-4 py-3 ${
           order.status === "cooking"
             ? "bg-amber-500/20"
+            : order.status === "delivering"
+              ? "bg-sky-500/20"
             : order.status === "done"
               ? "bg-green-500/20"
               : "bg-zinc-800"
@@ -96,12 +179,41 @@ function OrderTicket({
           <span className="text-2xl font-bold tracking-tight text-zinc-100">
             TABLE {order.table_number}
           </span>
+          <span
+            className={`rounded-full px-2 py-1 text-xs font-bold uppercase tracking-wide ${
+              order.order_type === "delivery"
+                ? "bg-sky-500/20 text-sky-300"
+                : "bg-emerald-500/20 text-emerald-300"
+            }`}
+          >
+            {order.order_type === "delivery" ? "Delivery" : "Pickup"}
+          </span>
         </div>
         <div className={`flex items-center gap-1.5 ${timerColor}`}>
           <Clock className="h-4 w-4" />
           <span className="text-lg font-semibold tabular-nums">{elapsed}</span>
         </div>
       </div>
+
+      {order.scheduled_time && (
+        <div className="mx-4 mt-3 rounded-md border border-sky-500/30 bg-sky-500/10 px-3 py-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wide text-sky-300">
+              ออเดอร์นัดเวลา
+            </span>
+            <span className="text-xs text-sky-200">
+              {new Date(order.scheduled_time).toLocaleTimeString("th-TH", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+          </div>
+          <div className="mt-1 flex items-center gap-1 text-sm font-bold text-sky-200">
+            <Clock className="h-4 w-4" />
+            {scheduledCountdown}
+          </div>
+        </div>
+      )}
 
       {/* Ticket Items */}
       <div className="flex flex-1 flex-col gap-2 px-4 py-3">
@@ -138,12 +250,32 @@ function OrderTicket({
           </button>
         )}
         {order.status === "cooking" && (
+          <>
+            {order.order_type === "delivery" && (
+              <button
+                onClick={() => onStatusChange(order.id, "delivering")}
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-sky-500 px-4 py-3.5 text-base font-bold text-zinc-900 transition-all hover:bg-sky-400 active:scale-[0.97]"
+              >
+                <Bike className="h-5 w-5" />
+                {"เริ่มส่ง"}
+              </button>
+            )}
+            <button
+              onClick={() => onStatusChange(order.id, "done")}
+              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-500 px-4 py-3.5 text-base font-bold text-zinc-900 transition-all hover:bg-green-400 active:scale-[0.97]"
+            >
+              <CheckCircle2 className="h-5 w-5" />
+              {order.order_type === "delivery" ? "ส่งสำเร็จ" : "เสร็จแล้ว / เสิร์ฟ"}
+            </button>
+          </>
+        )}
+        {order.status === "delivering" && (
           <button
             onClick={() => onStatusChange(order.id, "done")}
             className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-500 px-4 py-3.5 text-base font-bold text-zinc-900 transition-all hover:bg-green-400 active:scale-[0.97]"
           >
             <CheckCircle2 className="h-5 w-5" />
-            {"เสร็จแล้ว / เสิร์ฟ"}
+            {"ส่งสำเร็จ"}
           </button>
         )}
         {order.status === "done" && (
@@ -185,6 +317,7 @@ export function KDSDashboard() {
         { event: "*", schema: "public", table: "orders" },
         (payload) => {
           if (payload.eventType === "INSERT") {
+            playNewOrderBeep()
             setOrders((prev) => [payload.new as Order, ...prev])
           } else if (payload.eventType === "UPDATE") {
             setOrders((prev) =>
@@ -216,7 +349,7 @@ export function KDSDashboard() {
 
   const handleStatusChange = async (
     id: string,
-    newStatus: "cooking" | "done"
+    newStatus: "cooking" | "delivering" | "done"
   ) => {
     const { error } = await supabase
       .from("orders")
@@ -235,11 +368,13 @@ export function KDSDashboard() {
   }
 
   const activeOrders = orders.filter(
-    (o) => o.status === "pending" || o.status === "cooking"
+    (o) =>
+      o.status === "pending" || o.status === "cooking" || o.status === "delivering"
   )
   const completedOrders = orders.filter((o) => o.status === "done")
   const pendingCount = orders.filter((o) => o.status === "pending").length
   const cookingCount = orders.filter((o) => o.status === "cooking").length
+  const deliveringCount = orders.filter((o) => o.status === "delivering").length
 
   const displayOrders = view === "active" ? activeOrders : completedOrders
 
@@ -265,6 +400,13 @@ export function KDSDashboard() {
             <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-amber-500" />
             <span className="text-base font-bold text-amber-400">
               {"ทำอยู่: "}{cookingCount}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 rounded-lg bg-zinc-800 px-3 py-1.5">
+            <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-sky-500" />
+            <span className="text-base font-bold text-sky-400">
+              <ShoppingBag className="mr-1 inline h-4 w-4" />
+              {"กำลังส่ง: "}{deliveringCount}
             </span>
           </div>
         </div>
