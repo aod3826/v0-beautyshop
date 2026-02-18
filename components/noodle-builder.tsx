@@ -68,10 +68,10 @@ export function NoodleBuilder({ item, onClose }: NoodleBuilderProps) {
       .filter(Boolean)
 
     const options = [
-      noodle ? `${noodle.name} (${noodle.nameTh})` : "",
-      soup ? `${soup.name} (${soup.nameTh})` : "",
-      size ? `${size.name} (${size.nameTh})` : "",
-      ...extras.map((e) => `${e!.name} (${e!.nameTh})`),
+      noodle ? noodle.nameTh : "",
+      soup ? soup.nameTh : "",
+      size ? size.nameTh : "",
+      ...extras.map((e) => e!.nameTh),
     ].filter(Boolean)
 
     const uniqueId = `${item.id}-${selectedNoodle}-${selectedSoup}-${selectedSize}-${selectedExtras.sort().join("-")}-${Date.now()}`
@@ -93,14 +93,14 @@ export function NoodleBuilder({ item, onClose }: NoodleBuilderProps) {
       <div className="relative flex items-center justify-between border-b border-border px-4 py-3">
         <button
           onClick={onClose}
-          aria-label="Close builder"
+          aria-label="ปิดหน้าปรับเมนู"
           className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
         >
           <X className="h-4 w-4" />
         </button>
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-          <h2 className="text-sm font-semibold text-foreground">{item.name}</h2>
-          <p className="text-xs text-muted-foreground">{item.nameTh}</p>
+          <h2 className="text-sm font-semibold text-foreground">{item.nameTh}</h2>
+          <p className="text-xs text-muted-foreground">{item.name}</p>
         </div>
         <span className="text-xs text-muted-foreground">
           {step}/{totalSteps}
@@ -126,10 +126,10 @@ export function NoodleBuilder({ item, onClose }: NoodleBuilderProps) {
         {step === 1 && (
           <div>
             <h3 className="mb-1 text-lg font-bold text-foreground">
-              Choose Your Noodle
+              เลือกเส้นที่คุณชอบ
             </h3>
             <p className="mb-4 text-sm text-muted-foreground">
-              {"เลือกเส้น"}
+              {"เลือกประเภทเส้น"}
             </p>
             <div className="grid grid-cols-2 gap-3">
               {noodleTypes.map((noodle) => (
@@ -146,15 +146,15 @@ export function NoodleBuilder({ item, onClose }: NoodleBuilderProps) {
                   <div className="aspect-square overflow-hidden">
                     <img
                       src={noodle.image}
-                      alt={noodle.name}
+                      alt={noodle.nameTh}
                       className="h-full w-full object-cover"
                     />
                   </div>
                   <div className="bg-card p-2 text-center">
                     <p className="text-sm font-semibold text-card-foreground">
-                      {noodle.name}
+                      {noodle.nameTh}
                     </p>
-                    <p className="text-xs text-muted-foreground">{noodle.nameTh}</p>
+                    <p className="text-xs text-muted-foreground">{noodle.name}</p>
                   </div>
                   {selectedNoodle === noodle.id && (
                     <div className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -171,7 +171,7 @@ export function NoodleBuilder({ item, onClose }: NoodleBuilderProps) {
         {step === 2 && (
           <div>
             <h3 className="mb-1 text-lg font-bold text-foreground">
-              Soup Style
+              เลือกประเภทน้ำซุป
             </h3>
             <p className="mb-4 text-sm text-muted-foreground">
               {"เลือกประเภทน้ำซุป"}
@@ -189,9 +189,9 @@ export function NoodleBuilder({ item, onClose }: NoodleBuilderProps) {
                   )}
                 >
                   <span className="text-base font-semibold text-card-foreground">
-                    {soup.name}
+                    {soup.nameTh}
                   </span>
-                  <span className="text-sm text-muted-foreground">{soup.nameTh}</span>
+                  <span className="text-sm text-muted-foreground">{soup.name}</span>
                   {selectedSoup === soup.id && (
                     <Check className="mt-1 h-5 w-5 text-primary" />
                   )}
@@ -205,7 +205,7 @@ export function NoodleBuilder({ item, onClose }: NoodleBuilderProps) {
         {step === 3 && (
           <div>
             <h3 className="mb-1 text-lg font-bold text-foreground">
-              Level Up
+              เลือกขนาด
             </h3>
             <p className="mb-4 text-sm text-muted-foreground">
               {"เลือกขนาด"}
@@ -224,9 +224,9 @@ export function NoodleBuilder({ item, onClose }: NoodleBuilderProps) {
                 >
                   <div className="text-left">
                     <p className="text-lg font-bold text-card-foreground">
-                      {size.name}
+                      {size.nameTh}
                     </p>
-                    <p className="text-sm text-muted-foreground">{size.nameTh}</p>
+                    <p className="text-sm text-muted-foreground">{size.name}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     {size.extra > 0 && (
@@ -250,7 +250,7 @@ export function NoodleBuilder({ item, onClose }: NoodleBuilderProps) {
         {step === 4 && (
           <div>
             <h3 className="mb-1 text-lg font-bold text-foreground">
-              Special Requests
+              เพิ่มตัวเลือกพิเศษ
             </h3>
             <p className="mb-4 text-sm text-muted-foreground">
               {"คำขอพิเศษ (ไม่ต้องเลือกก็ได้)"}
@@ -269,9 +269,9 @@ export function NoodleBuilder({ item, onClose }: NoodleBuilderProps) {
                 >
                   <div className="text-left">
                     <p className="text-sm font-semibold text-card-foreground">
-                      {extra.name}
+                      {extra.nameTh}
                     </p>
-                    <p className="text-xs text-muted-foreground">{extra.nameTh}</p>
+                    <p className="text-xs text-muted-foreground">{extra.name}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     {extra.extra > 0 && (
@@ -302,7 +302,7 @@ export function NoodleBuilder({ item, onClose }: NoodleBuilderProps) {
       {/* Bottom Actions */}
       <div className="fixed inset-x-0 bottom-0 border-t border-border bg-background/95 p-4 backdrop-blur-md">
         <div className="mb-3 flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Total</span>
+          <span className="text-sm text-muted-foreground">ยอดรวมทั้งหมด</span>
           <span className="text-xl font-bold text-primary">
             {calculatePrice()}&#3647;
           </span>
@@ -313,7 +313,7 @@ export function NoodleBuilder({ item, onClose }: NoodleBuilderProps) {
               onClick={() => setStep((s) => s - 1)}
               className="flex-1 rounded-xl border border-border bg-secondary py-3.5 text-sm font-semibold text-secondary-foreground transition-colors hover:bg-secondary/80"
             >
-              Back
+              ย้อนกลับ
             </button>
           )}
           {step < totalSteps ? (
@@ -327,14 +327,14 @@ export function NoodleBuilder({ item, onClose }: NoodleBuilderProps) {
                   : "cursor-not-allowed bg-muted text-muted-foreground"
               )}
             >
-              Next <ChevronRight className="h-4 w-4" />
+              ถัดไป <ChevronRight className="h-4 w-4" />
             </button>
           ) : (
             <button
               onClick={handleAddToCart}
               className="flex flex-[2] items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all hover:opacity-90"
             >
-              Add to Cart - {calculatePrice()}&#3647;
+              เพิ่มลงตะกร้า - {calculatePrice()}&#3647;
             </button>
           )}
         </div>

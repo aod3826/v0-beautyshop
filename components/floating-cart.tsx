@@ -20,7 +20,7 @@ export function FloatingCart() {
             {totalItems}
           </span>
         </div>
-        <span className="text-sm font-semibold">View Cart</span>
+        <span className="text-sm font-semibold">ดูตะกร้า</span>
       </div>
       <span className="text-base font-bold">{totalPrice}&#3647;</span>
     </button>

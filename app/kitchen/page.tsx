@@ -2,8 +2,8 @@ import { KDSDashboard } from "@/components/kds-dashboard"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Kitchen Display | Beautyshop KDS",
-  description: "Kitchen Display System for order management",
+  title: "หน้าครัว | Beautyshop KDS",
+  description: "ระบบหน้าครัวสำหรับจัดการออเดอร์",
 }
 
 export default function KitchenPage() {

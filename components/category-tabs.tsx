@@ -3,9 +3,9 @@
 import { cn } from "@/lib/utils"
 
 const categories = [
-  { id: "noodles" as const, name: "Noodles", nameTh: "ก๋วยเตี๋ยว", icon: "🍜" },
-  { id: "rice" as const, name: "Rice Dishes", nameTh: "อาหารจานเดียว", icon: "🍚" },
-  { id: "sides" as const, name: "Sides/Drinks", nameTh: "ของทานเล่น/น้ำ", icon: "🥤" },
+  { id: "noodles" as const, name: "ก๋วยเตี๋ยว", nameTh: "เมนูเส้น", icon: "🍜" },
+  { id: "rice" as const, name: "อาหารจานเดียว", nameTh: "เมนูข้าว", icon: "🍚" },
+  { id: "sides" as const, name: "ของทานเล่น/เครื่องดื่ม", nameTh: "ทานเล่นและน้ำ", icon: "🥤" },
 ]
 
 interface CategoryTabsProps {
@@ -16,7 +16,7 @@ interface CategoryTabsProps {
 export function CategoryTabs({ activeCategory, onCategoryChange }: CategoryTabsProps) {
   return (
     <div className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md">
-      <nav className="flex" role="tablist" aria-label="Menu categories">
+      <nav className="flex" role="tablist" aria-label="หมวดหมู่เมนู">
         {categories.map((cat) => (
           <button
             key={cat.id}
