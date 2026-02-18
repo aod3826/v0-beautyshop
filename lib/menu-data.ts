@@ -1,13 +1,4 @@
-export interface MenuItem {
-  id: string
-  name: string
-  nameTh: string
-  description: string
-  price: number
-  image: string
-  category: "noodles" | "rice" | "sides"
-  isCustomizable?: boolean
-}
+import type { MenuItem } from "@/lib/menu-types"
 
 export const menuItems: MenuItem[] = [
   // Noodles

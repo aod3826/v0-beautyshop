@@ -8,9 +8,9 @@ import {
   noodleTypes,
   soupStyles,
   sizeOptions,
-  extraOptions,
-  type MenuItem,
+  extraOptions
 } from "@/lib/menu-data"
+import type { MenuItem } from "@/lib/menu-types"
 
 interface NoodleBuilderProps {
   item: MenuItem
