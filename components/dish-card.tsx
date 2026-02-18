@@ -1,7 +1,7 @@
 "use client"
 
 import { Plus } from "lucide-react"
-import type { MenuItem } from "@/lib/menu-data"
+import type { MenuItem } from "@/lib/menu-types"
 import { useCart } from "@/lib/cart-context"
 
 interface DishCardProps {
