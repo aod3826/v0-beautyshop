@@ -98,18 +98,18 @@ export function CartSummary() {
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <button
           onClick={() => setIsCartOpen(false)}
-          aria-label="Close cart"
+          aria-label="ปิดตะกร้า"
           className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
         >
           <X className="h-4 w-4" />
         </button>
-        <h2 className="text-base font-bold text-foreground">Your Order</h2>
+        <h2 className="text-base font-bold text-foreground">รายการสั่งซื้อของคุณ</h2>
         {items.length > 0 ? (
           <button
             onClick={clearCart}
             className="text-xs text-destructive hover:underline"
           >
-            Clear
+            ล้างทั้งหมด
           </button>
         ) : (
           <div className="w-8" />
@@ -121,7 +121,7 @@ export function CartSummary() {
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20">
             <ShoppingBag className="mb-3 h-12 w-12 text-muted-foreground/30" />
-            <p className="text-sm text-muted-foreground">Your cart is empty</p>
+            <p className="text-sm text-muted-foreground">ตะกร้าของคุณว่างอยู่</p>
             <p className="text-xs text-muted-foreground">
               {"เพิ่มอาหารจากเมนูได้เลย"}
             </p>
@@ -135,16 +135,16 @@ export function CartSummary() {
               >
                 <img
                   src={item.image}
-                  alt={item.name}
+                  alt={item.nameTh}
                   className="h-16 w-16 rounded-lg object-cover"
                 />
                 <div className="flex flex-1 flex-col justify-between">
                   <div>
                     <h3 className="text-sm font-semibold text-card-foreground">
-                      {item.name}
+                      {item.nameTh}
                     </h3>
                     <p className="text-[10px] text-muted-foreground">
-                      {item.nameTh}
+                      {item.name}
                     </p>
                     {item.options && item.options.length > 0 && (
                       <p className="mt-0.5 text-[10px] leading-relaxed text-muted-foreground">
@@ -163,7 +163,7 @@ export function CartSummary() {
                             ? removeItem(item.id)
                             : updateQuantity(item.id, item.quantity - 1)
                         }
-                        aria-label="Decrease quantity"
+                        aria-label="ลดจำนวน"
                         className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground"
                       >
                         {item.quantity === 1 ? (
@@ -179,7 +179,7 @@ export function CartSummary() {
                         onClick={() =>
                           updateQuantity(item.id, item.quantity + 1)
                         }
-                        aria-label="Increase quantity"
+                        aria-label="เพิ่มจำนวน"
                         className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground"
                       >
                         <Plus className="h-3 w-3" />
@@ -283,7 +283,7 @@ export function CartSummary() {
           </div>
 
           <div className="mb-3 flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Total</span>
+            <span className="text-sm text-muted-foreground">ยอดรวมทั้งหมด</span>
             <span className="text-xl font-bold text-primary">
               {totalPrice}&#3647;
             </span>
@@ -293,7 +293,7 @@ export function CartSummary() {
             disabled={isSubmitting}
             className="w-full rounded-xl bg-primary py-4 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {isSubmitting ? "กำลังส่งคำสั่งซื้อ..." : "Confirm Order"}
+            {isSubmitting ? "กำลังส่งคำสั่งซื้อ..." : "สั่งอาหาร"}
           </button>
           {submitMessage && (
             <p className="mt-2 text-center text-xs text-muted-foreground">

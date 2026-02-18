@@ -10,8 +10,8 @@ const kanit = Kanit({
 })
 
 export const metadata: Metadata = {
-  title: 'Beautyshop | Thai Street Food Menu',
-  description: 'Delicious Thai street food - Noodles, Rice Dishes, Sides & Drinks. Order from your table!',
+  title: 'Beautyshop | เมนูอาหารไทย',
+  description: 'เมนูสตรีทฟู้ดไทย ทั้งก๋วยเตี๋ยว อาหารจานเดียว ของทานเล่น และเครื่องดื่ม สั่งอาหารได้จากโต๊ะทันที',
 }
 
 export const viewport: Viewport = {

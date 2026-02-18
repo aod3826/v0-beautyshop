@@ -36,11 +36,11 @@ function getElapsedTime(createdAt: string): string {
   const diff = Math.floor(
     (Date.now() - new Date(createdAt).getTime()) / 1000
   )
-  if (diff < 60) return `${diff}s`
+  if (diff < 60) return `${diff}วิ`
   const mins = Math.floor(diff / 60)
-  if (mins < 60) return `${mins}m`
+  if (mins < 60) return `${mins}น`
   const hrs = Math.floor(mins / 60)
-  return `${hrs}h ${mins % 60}m`
+  return `${hrs}ชม. ${mins % 60}น`
 }
 
 function getTimerColor(createdAt: string, status: string): string {
@@ -66,10 +66,10 @@ function getRemainingTime(targetTime: string): string {
   const secs = totalSeconds % 60
 
   if (hours > 0) {
-    return `${hours}h ${String(mins).padStart(2, "0")}m ${String(secs).padStart(2, "0")}s`
+    return `${hours}ชม. ${String(mins).padStart(2, "0")}น ${String(secs).padStart(2, "0")}วิ`
   }
 
-  return `${String(mins).padStart(2, "0")}m ${String(secs).padStart(2, "0")}s`
+  return `${String(mins).padStart(2, "0")}น ${String(secs).padStart(2, "0")}วิ`
 }
 
 function playNewOrderBeep() {
@@ -177,7 +177,7 @@ function OrderTicket({
       >
         <div className="flex items-center gap-2">
           <span className="text-2xl font-bold tracking-tight text-zinc-100">
-            TABLE {order.table_number}
+            โต๊ะ {order.table_number}
           </span>
           <span
             className={`rounded-full px-2 py-1 text-xs font-bold uppercase tracking-wide ${
@@ -186,7 +186,7 @@ function OrderTicket({
                 : "bg-emerald-500/20 text-emerald-300"
             }`}
           >
-            {order.order_type === "delivery" ? "Delivery" : "Pickup"}
+            {order.order_type === "delivery" ? "จัดส่ง" : "รับเอง"}
           </span>
         </div>
         <div className={`flex items-center gap-1.5 ${timerColor}`}>
@@ -385,7 +385,7 @@ export function KDSDashboard() {
         <div className="flex items-center gap-3">
           <ChefHat className="h-7 w-7 text-amber-500" />
           <h1 className="text-xl font-bold text-zinc-100 md:text-2xl">
-            Kitchen Display
+            หน้าครัว
           </h1>
         </div>
 
@@ -421,7 +421,7 @@ export function KDSDashboard() {
             }`}
           >
             <Flame className="h-4 w-4" />
-            Active ({activeOrders.length})
+            งานที่กำลังดำเนินการ ({activeOrders.length})
           </button>
           <button
             onClick={() => setView("history")}
@@ -432,7 +432,7 @@ export function KDSDashboard() {
             }`}
           >
             <History className="h-4 w-4" />
-            History ({completedOrders.length})
+            ประวัติออเดอร์ ({completedOrders.length})
           </button>
         </div>
       </header>
@@ -450,8 +450,8 @@ export function KDSDashboard() {
               </p>
               <p className="text-sm text-zinc-700">
                 {view === "active"
-                  ? "Waiting for new orders..."
-                  : "Completed orders will appear here"}
+                  ? "กำลังรอออเดอร์ใหม่..."
+                  : "ออเดอร์ที่เสร็จแล้วจะแสดงที่นี่"}
               </p>
             </div>
           </div>
@@ -471,7 +471,7 @@ export function KDSDashboard() {
       {/* Footer status bar */}
       <footer className="border-t border-zinc-800 bg-zinc-900 px-4 py-2 text-center">
         <span className="text-xs text-zinc-600">
-          Live updates via Supabase Realtime &mdash; Last refresh:{" "}
+          อัปเดตสดผ่าน Supabase Realtime &mdash; รีเฟรชล่าสุด:{" "}
           {new Date(now).toLocaleTimeString("th-TH")}
         </span>
       </footer>
